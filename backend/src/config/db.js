@@ -2,15 +2,21 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    if (!process.env.MONGO_URI) {
-      console.log(`⚠️ Warning: MONGO_URI is not defined. Falling back to in-memory mock database for authentication.`);
+    if (!process.env.MONGO_URI || process.env.MONGO_URI.includes('localhost') && process.env.SKIP_LOCAL_DB === 'true') {
+      console.log(`⚠️ Warning: MONGO_URI is not defined or skipped. Falling back to in-memory mock database.`);
+      delete process.env.MONGO_URI; // Ensure controllers use mock
       return;
     }
     const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
-    process.exit(1);
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1);
+    } else {
+      console.log(`⚠️ Fallback: Proceeding with in-memory database mock for local development.`);
+      delete process.env.MONGO_URI; // Fall back to mock in controllers
+    }
   }
 };
 
