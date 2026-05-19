@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 // In-memory mock database for users since MongoDB isn't running locally
 const mockUsers = [];
@@ -13,26 +14,51 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     
-    const userExists = mockUsers.find(u => u.email === email);
+    if (!process.env.MONGO_URI) {
+      const userExists = mockUsers.find(u => u.email === email);
+      if (userExists) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
+
+      const newUser = {
+        _id: Date.now().toString(),
+        name,
+        email,
+        password // storing raw password just for mock purposes
+      };
+      
+      mockUsers.push(newUser);
+
+      return res.status(201).json({
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        token: generateToken(newUser._id),
+      });
+    }
+
+    // Production Mongoose Database mode
+    const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const newUser = {
-      _id: Date.now().toString(),
+    const user = await User.create({
       name,
       email,
-      password // storing raw password just for mock purposes
-    };
-    
-    mockUsers.push(newUser);
-
-    res.status(201).json({
-      _id: newUser._id,
-      name: newUser.name,
-      email: newUser.email,
-      token: generateToken(newUser._id),
+      password,
     });
+
+    if (user) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(400).json({ message: 'Invalid user data' });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -41,10 +67,25 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = mockUsers.find(u => u.email === email);
 
-    // Simple raw password check for the mock
-    if (user && user.password === password) {
+    if (!process.env.MONGO_URI) {
+      const user = mockUsers.find(u => u.email === email);
+      // Simple raw password check for the mock
+      if (user && user.password === password) {
+        return res.json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          token: generateToken(user._id),
+        });
+      } else {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+    }
+
+    // Production Mongoose Database mode
+    const user = await User.findOne({ email });
+    if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user._id,
         name: user.name,
@@ -61,10 +102,22 @@ const loginUser = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    const user = mockUsers.find(u => u._id === req.user?._id || u._id === req.user?.id);
+    const userId = req.user?._id || req.user?.id;
+
+    if (!process.env.MONGO_URI) {
+      const user = mockUsers.find(u => u._id === userId);
+      if (user) {
+        const { password, ...safeUser } = user;
+        return res.json(safeUser);
+      } else {
+        return res.status(404).json({ message: 'User not found' });
+      }
+    }
+
+    // Production Mongoose Database mode
+    const user = await User.findById(userId).select('-password');
     if (user) {
-      const { password, ...safeUser } = user;
-      res.json(safeUser);
+      res.json(user);
     } else {
       res.status(404).json({ message: 'User not found' });
     }

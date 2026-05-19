@@ -1,0 +1,93 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>AI Career Coach - Project Documentation</title>
+<style>
+  body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  h1 { color: #2C3E50; font-size: 28px; border-bottom: 2px solid #3498DB; padding-bottom: 10px; }
+  h2 { color: #2980B9; font-size: 22px; margin-top: 30px; }
+  h3 { color: #16A085; font-size: 18px; margin-top: 20px; }
+  p { font-size: 14px; margin-bottom: 10px; }
+  ul { font-size: 14px; margin-bottom: 15px; }
+  li { margin-bottom: 8px; }
+  .highlight { background-color: #F4F6F7; padding: 10px; border-left: 4px solid #3498DB; margin: 15px 0; }
+  .tech-stack { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tech-badge { background-color: #ECF0F1; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold; border: 1px solid #BDC3C7; }
+</style>
+</head>
+<body>
+
+<h1>AI Career Coach - Project Documentation</h1>
+
+<div class="highlight">
+  <strong>Overview:</strong> AI Career Coach is a full-stack, AI-powered web application designed to act as a 24/7 personal career assistant. It helps users optimize their resumes for Applicant Tracking Systems (ATS), practice for interviews using a conversational AI bot, and generate personalized weekly learning roadmaps based on their career goals.
+</div>
+
+<h2>1. Core Features</h2>
+
+<h3>📄 AI Resume Analyzer</h3>
+<ul>
+  <li><strong>What it does:</strong> Users upload their PDF resumes. The app reads the text and grades it.</li>
+  <li><strong>How it works:</strong> The backend extracts text from the PDF and sends it to OpenAI.</li>
+  <li><strong>What the user gets:</strong> An ATS Score (0-100), a list of missing industry skills, and AI-rewritten bullet points to make their resume stand out.</li>
+</ul>
+
+<h3>💬 Mock Interview Bot</h3>
+<ul>
+  <li><strong>What it does:</strong> A chat interface where users practice Technical, Behavioral, or HR interviews.</li>
+  <li><strong>How it works:</strong> The AI acts as a strict but helpful interviewer, asking one question at a time and waiting for the user's response.</li>
+  <li><strong>What the user gets:</strong> Real-time feedback, follow-up questions, and a realistic interview simulation.</li>
+</ul>
+
+<h3>🎯 Personalized Roadmap Generator</h3>
+<ul>
+  <li><strong>What it does:</strong> Generates a step-by-step learning plan.</li>
+  <li><strong>How it works:</strong> The user selects their target role (e.g., Frontend Developer) and experience level. The AI generates a structured 4-week curriculum.</li>
+  <li><strong>What the user gets:</strong> A visual timeline of weekly topics to study, complete with interactive checkboxes to track progress.</li>
+</ul>
+
+<h2>2. Technology Stack</h2>
+
+<p>The application is built using modern, industry-standard technologies:</p>
+
+<h3>Frontend (What the user sees)</h3>
+<ul>
+  <li><strong>React.js & Vite:</strong> For building a fast, interactive user interface.</li>
+  <li><strong>Tailwind CSS:</strong> For modern styling, featuring a premium Dark Theme and Glassmorphism (frosted glass) effects.</li>
+  <li><strong>Framer Motion:</strong> For smooth animations and page transitions.</li>
+</ul>
+
+<h3>Backend (The engine)</h3>
+<ul>
+  <li><strong>Node.js & Express.js:</strong> The server that handles requests and routing.</li>
+  <li><strong>OpenAI API:</strong> The brain of the application (uses GPT-3.5/4) to process text and generate insights.</li>
+  <li><strong>PDF-Parse:</strong> A tool used to read text directly from uploaded PDF files.</li>
+  <li><strong>JSON Web Tokens (JWT):</strong> For secure user authentication and login sessions.</li>
+</ul>
+
+<h2>3. How Data Flows (Architecture)</h2>
+<ol>
+  <li><strong>User Input:</strong> The user interacts with the React frontend (e.g., clicks "Analyze Resume").</li>
+  <li><strong>Server Communication:</strong> The frontend securely sends this data to the Express backend.</li>
+  <li><strong>AI Processing:</strong> The backend talks to OpenAI, asking it to analyze the data based on strict instructions.</li>
+  <li><strong>Results Displayed:</strong> OpenAI sends the structured data back to our server, which forwards it to the user's screen instantly with engaging animations.</li>
+</ol>
+
+<h2>4. Future Enhancements</h2>
+<ul>
+  <li><strong>Live Database Integration:</strong> Connect a live MongoDB database to permanently save user progress, roadmaps, and chat history across sessions.</li>
+  <li><strong>Social Login:</strong> Add Google and GitHub login options for faster onboarding.</li>
+  <li><strong>PDF Export:</strong> Allow users to export their newly improved resumes directly to PDF.</li>
+</ul>
+
+</body>
+</html>
