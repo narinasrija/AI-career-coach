@@ -11,12 +11,8 @@ const connectDB = async () => {
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
-    if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
-    } else {
-      console.log(`⚠️ Fallback: Proceeding with in-memory database mock for local development.`);
-      delete process.env.MONGO_URI; // Fall back to mock in controllers
-    }
+    console.log(`⚠️ Fallback: Proceeding with in-memory database mock.`);
+    delete process.env.MONGO_URI; // Fall back to mock in controllers
   }
 };
 
